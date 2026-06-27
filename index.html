@@ -4,52 +4,234 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 頂級行銷文案工作台</title>
-    <!-- [此處省略詳細 CSS 樣式，詳見參考文件] -->
+    
+    <!-- 📱 行動裝置 App 封裝核心設定 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AI文案大師">
+
     <style>
-        /* 樣式優化，提供乾淨的工作台介面 */
-        body { font-family: sans-serif; padding: 20px; background-color: #f3f4f6; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
-        .form-group { margin-bottom: 15px; }
-        input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
-        .btn-submit { width: 100%; padding: 10px; background: #4f46e5; color: white; border: none; cursor: pointer; }
-        #resultSection { display: none; margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px; }
-        #promptBox { white-space: pre-wrap; background: #1e293b; color: #cbd5e1; padding: 10px; }
+        /* 🚀 零依賴極速輕量化 CSS 結構 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background-color: #f3f4f6; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #1f2937;
+            padding: 20px 10px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .app-card { 
+            background: #ffffff; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .header { 
+            background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); 
+            color: white; 
+            padding: 24px; 
+            text-align: center;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 6px; font-weight: bold; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .body-content { padding: 20px; }
+        
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 15px; color: #374151; }
+        
+        input[type="text"], textarea { 
+            width: 100%; 
+            padding: 10px 12px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 8px; 
+            font-size: 15px;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus { outline: none; border-color: #4f46e5; }
+        
+        /* 5 種風格網格優化 */
+        .style-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; margin-bottom: 20px; }
+        @media(min-width: 500px) { .style-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media(min-width: 750px) { .style-grid { grid-template-columns: repeat(3, 1fr); } }
+        
+        .style-item { position: relative; }
+        .style-item input[type="radio"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+        .style-label { 
+            display: block; 
+            padding: 12px; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 8px; 
+            text-align: left; 
+            font-size: 13px; 
+            font-weight: bold;
+            background: white;
+            height: 100%;
+        }
+        .style-desc { display: block; font-size: 11px; color: #6b7280; font-weight: normal; margin-top: 4px; }
+        .style-item input[type="radio"]:checked + .style-label { border-color: #4f46e5; background-color: #e0e7ff; color: #4f46e5; }
+        
+        .btn-submit { 
+            width: 100%; 
+            background-color: #4f46e5; 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            border-radius: 8px; 
+            cursor: pointer; 
+        }
+        .btn-submit:hover { background-color: #4338ca; }
+        
+        /* 提示詞結果顯示區 */
+        .result-section { display: none; border-top: 2px dashed #e5e7eb; margin-top: 25px; padding-top: 20px; }
+        .result-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #111827; }
+        .result-card { background: #1e293b; border-radius: 8px; padding: 18px; margin-bottom: 15px; border: 1px solid #334155; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .badge { background-color: #3b82f6; padding: 4px 8px; border-radius: 4px; color: white; font-size: 12px; font-weight: bold; }
+        .btn-copy { background: #4f46e5; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-copy:hover { background: #4338ca; }
+        .result-body { white-space: pre-wrap; font-size: 14px; color: #cbd5e1; font-family: monospace; line-height: 1.6; word-break: break-all; }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <h2>AI 頂級行銷文案工作台</h2>
-    <div class="form-group"><label>商品名稱</label><input type="text" id="prodName"></div>
-    <div class="form-group"><label>特色與規格</label><textarea id="prodFeatures"></textarea></div>
-    <div class="form-group"><label>目標客群 (TA)</label><input type="text" id="targetAudience"></div>
-    <div class="form-group"><label>痛點或渴望</label><input type="text" id="corePain"></div>
-    <div class="form-group">
-        <label>選擇風格</label>
-        <select id="copyStyle">
-            <option value="情境共鳴型">情境共鳴型</option>
-            <option value="知識科普型">知識科普型</option>
-        </select>
-    </div>
-    <button class="btn-submit" onclick="generatePrompt()">一鍵調配提示詞</button>
-    <div id="resultSection">
-        <h3>複製下方指令貼給 AI：</h3>
-        <div id="promptBox"></div>
-        <button onclick="copyText()">一鍵複製</button>
+    <div class="card app-card">
+        <div class="header">
+            <h1>AI 頂級行銷文案工作台</h1>
+            <p>100% 免密碼防卡死 • 自動組裝三大通路終極指令</p>
+        </div>
+        
+        <div class="body-content">
+            <!-- 商品輸入欄位 -->
+            <div class="form-group">
+                <label>商品名稱</label>
+                <input type="text" id="prodName" placeholder="例如：日系原木感靜音除濕機">
+            </div>
+            
+            <div class="form-group">
+                <label>商品特色與規格</label>
+                <textarea id="prodFeatures" rows="3" placeholder="例如：日除濕量12L、運轉僅25分貝、一級能效節電、極簡無印風格"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;" class="form-group">
+                <div style="flex: 1; min-width: 200px;">
+                    <label>目標客群 (TA)</label>
+                    <input type="text" id="targetAudience" placeholder="例如：注重睡眠品質的租屋小資族">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label>想解決的痛點或渴望</label>
+                    <input type="text" id="corePain" placeholder="例如：房間潮濕衣服曬不乾、除濕機太吵影響睡眠">
+                </div>
+            </div>
+
+            <!-- 擴充：5 種風格選擇區 -->
+            <div class="form-group">
+                <label>選擇 FB 文案衍生風格 (演算法高觸及權重)</label>
+                <div class="style-grid">
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style1" value="情境共鳴型" checked>
+                        <div class="style-label">🔥 情境共鳴型<span class="style-desc">直擊日常尷尬痛點，引發讀者頻頻點頭。</span></div>
+                    </div>
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style2" value="知識科普型">
+                        <div class="style-label">💡 知識科普型<span class="style-desc">拆解生活盲點提供乾貨，以專業形象包裝。</span></div>
+                    </div>
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style3" value="幽默吐槽型">
+                        <div class="style-label">🎭 幽默自嘲型<span class="style-desc">用趣味自黑與辛辣吐槽，引爆留言區互動率。</span></div>
+                    </div>
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style4" value="高冷文青型">
+                        <div class="style-label">✨ 高級文青型<span class="style-desc">極重美學儀式感，描繪理想生活的細膩畫面。</span></div>
+                    </div>
+                    <div class="style-item" style="grid-column: span 1;">
+                        <input type="radio" name="copyStyle" id="style5" value="反常識顛覆型">
+                        <div class="style-label">🚨 反常識顛覆型<span class="style-desc">先否定常規觀念製造衝突，強力吸住眼球。</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交按鈕 -->
+            <button class="btn-submit" onclick="generateUltimatePrompt()">一鍵組裝大師級 AI 提示詞</button>
+
+            <!-- 結果顯示區 -->
+            <div id="resultSection" class="result-section">
+                <div class="result-header">
+                    <div class="result-title">🎯 請複製下方指令貼給任何 AI</div>
+                    <button class="btn-copy" onclick="copyUltimatePrompt()">點擊一鍵複製</button>
+                </div>
+                
+                <div class="result-card">
+                    <div id="promptBox" class="result-body"></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
+
 <script>
-function generatePrompt() {
-    const name = document.getElementById('prodName').value;
-    const features = document.getElementById('prodFeatures').value;
-    const style = document.getElementById('copyStyle').value;
-    // 生成提示詞邏輯 (詳見參考文件)
-    const prompt = `你是一位頂級行銷文案大師。請根據以下資訊撰寫風格為「${style}」的爆款文案：商品名稱-${name}，核心特色-${features}。請專注於痛點與生活畫面感，符合FB演算法，字數約300-500字。`;
-    document.getElementById('promptBox').innerText = prompt;
+function generateUltimatePrompt() {
+    const name = document.getElementById('prodName').value || '【請替換為您的商品名稱】';
+    const features = document.getElementById('prodFeatures').value || '【請替換為您的商品特色規格】';
+    const ta = document.getElementById('targetAudience').value || '潛在消費者群';
+    const pain = document.getElementById('corePain').value || '日常生活中的不便與渴望';
+    const style = document.querySelector('input[name="copyStyle"]:checked').value;
+
+    // 將所有文案框架與演算法權重深度揉捏進這份完美的 System Prompt 中
+    const finalPrompt = `你是一位精通微觀心理學與頂級直效行銷的行銷大師。你的任務是將提供的商品資料轉化為「免除痛苦」或「實現渴望」的終極解方，絕對不要進行生硬的產品推銷，而是要讓人看完產生強烈的欲求。
+
+請針對以下商品資料，為我撰寫三種不同渠道的行銷文案：
+
+---
+📦 商品原始資料：
+- 商品名稱：${name}
+- 特色與規格：${features}
+- 目標客群 (TA)：${ta}
+- 核心痛點與渴望：${pain}
+---
+
+📝 渠道產出規範：
+
+1. 【LINE 推播標題、文案】
+   - 語調風格：像熟稔的朋友私訊推薦好物，貼心、無壓力。
+   - 結構規範：
+     * 標題：20字以內，善用 1-2 個 emoji 創造視覺焦點，引導點開。
+     * 正文：150字以內。直接用日常情境切入痛點，給予一個「非看不可」的理由，結尾加上強烈呼籲點擊的無壓力導流詞。
+
+2. 【Facebook 爆款吸引人貼文】
+   - 撰寫風格：必須完全以【${style}】的文風與語調進行深度撰寫。
+   - 演算法喜好與爬蟲優化規則（死守）：
+     * 前 3 行（大約 60-80 字）是誘發點擊「查看更多」的生死線，必須直接使用場景痛點或懸念開頭，這能拉長用戶在貼文的停留時間（Dwell Time），絕對不能先提產品名字。
+     * 全文字數必須嚴格控制在 300 - 500 字之間，這是符合社群爬蟲語意權重最完美的長度。
+     * 嚴禁出現「買一送一」、「限時下殺」、「特價」、「限量搶購」、「點擊連結」等容易被 FB 判定為低質量廣告而遭自然觸及處罰（降觸及）的敏感導購詞。請用情境與渴望來包裝。
+     * 必須用條列式（Bullet Points）點出 3 個具生活畫面感的核心優勢。
+     * 文末請埋入 3-5 個具有高搜尋量、符合生活風格的 #Hashtag（包含品類名與痛點名）。
+
+3. 【公司的 APP 推播標題與文案】
+   - 字數限制：標題與內文的總字數「嚴格限制在 30 字以內」，多一個字就會在手機通知欄被截斷。
+   - 格式規範：[標題] 內文內容。
+   - 策略：製造好奇心缺口或即時的儀式感，引導使用者手指本能點開 App。
+
+請開始為我撰寫這三款讓人看了就想買的頂級文案。`;
+
+    document.getElementById('promptBox').innerText = finalPrompt;
     document.getElementById('resultSection').style.display = 'block';
+    
+    // 畫面流暢滾動到結果
+    window.scrollTo({ top: document.getElementById('resultSection').offsetTop, behavior: 'smooth' });
 }
-function copyText() {
-    navigator.clipboard.writeText(document.getElementById('promptBox').innerText);
-    alert('已複製！');
+
+function copyUltimatePrompt() {
+    const text = document.getElementById('promptBox').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('✨ 提示詞已成功複製到剪貼簿！\n請直接打開 ChatGPT、Claude 或 Gemini 貼上即可產出爆款文案！');
+    }).catch(() => {
+        alert('複製失敗，請手動全選文字複製。');
+    });
 }
 </script>
 </body>
