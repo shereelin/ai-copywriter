@@ -3,60 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 頂級行銷文案直產器 - Gemini 旗艦版</title>
+    <title>AI文案大師</title>
     
-    <!-- 🚀 更換為 jsDelivr 亞太高速加速節點的 Bootstrap 5 -->
-    <link href="https://jsdelivr.net" rel="stylesheet">
-    
-    <!-- 🚀 更換為 Cloudflare 官方高速節點的 FontAwesome 圖示 -->
-    <link rel="stylesheet" href="https://cloudflare.com" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
+    <!-- 📱 PWA 行動裝置 App 封裝核心設定 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AI文案大師">
+
     <style>
-        /* 保持原本的 CSS 樣式設定不變 */
-        body { background-color: #f4f7f6; font-family: "Microsoft JhengHei", sans-serif; }
-        .app-card { border: none; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); background: #ffffff; }
-        .gradient-header { background: linear-gradient(135deg, #1a73e8 0%, #00e676 100%); color: white; border-radius: 16px 16px 0 0; padding: 2rem; }
-        .result-box { background-color: #f8f9fa; border-left: 4px solid #1a73e8; padding: 1.2rem; border-radius: 4px; min-height: 80px; white-space: pre-wrap; }
-        .loading-spinner { display: none; }
-        .style-card { cursor: pointer; transition: all 0.2s; border: 2px solid #e0e0e0; }
-        .style-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .style-radio:checked + .style-card { border-color: #1a73e8; background-color: #f1f7ff; }
+        /* 🚀 極速優化：完全採用原生無外部資源的 CSS 樣式，拒絕任何加載延遲 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background-color: #f3f4f6; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            color: #1f2937;
+            line-height: 1.5;
+            padding: 20px 10px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .app-card { 
+            background: #ffffff; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        .header { 
+            background: linear-gradient(135deg, #1a73e8 0%, #00c853 100%); 
+            color: white; 
+            padding: 24px; 
+            text-align: center;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 6px; font-weight: bold; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .body-content { padding: 20px; }
+        
+        .section-title { 
+            font-size: 14px; 
+            font-weight: bold; 
+            color: #1a73e8; 
+            margin-bottom: 8px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .api-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 15px; color: #374151; }
+        
+        input[type="text"], input[type="password"], textarea, select { 
+            width: 100%; 
+            padding: 10px 12px; 
+            border: 1px solid #d1d5db; 
+            border-radius: 8px; 
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #1a73e8; }
+        
+        /* 風格選擇單選鈕優化 */
+        .style-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        @media(min-width: 600px) { .style-grid { grid-template-columns: repeat(4, 1fr); } }
+        .style-item { position: relative; }
+        .style-item input[type="radio"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+        .style-label { 
+            display: block; 
+            padding: 12px 8px; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 8px; 
+            text-align: center; 
+            font-size: 13px; 
+            font-weight: bold;
+            background: white;
+            transition: all 0.2s;
+        }
+        .style-desc { display: block; font-size: 11px; color: #6b7280; font-weight: normal; margin-top: 4px; }
+        .style-item input[type="radio"]:checked + .style-label { border-color: #1a73e8; background-color: #eff6ff; color: #1a73e8; }
+        
+        .btn-submit { 
+            width: 100%; 
+            background-color: #1a73e8; 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background-color: #1557b0; }
+        .btn-submit:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        
+        .loading { display: none; text-align: center; padding: 20px 0; }
+        .spinner { 
+            width: 30px; height: 30px; 
+            border: 3px solid #f3f3f3; border-top: 3px solid #1a73e8; 
+            border-radius: 50%; display: inline-block;
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { margin-top: 8px; font-size: 14px; color: #6b7280; }
+        
+        /* 成果框優化 */
+        .result-section { display: none; border-top: 2px dashed #e5e7eb; margin-top: 25px; padding-top: 20px; }
+        .result-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #111827; }
+        .result-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 12px; font-weight: bold; }
+        .btn-copy { background: white; border: 1px solid #d1d5db; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+        .btn-copy:hover { background: #f3f4f6; }
+        .result-body { white-space: pre-wrap; font-size: 14px; color: #374151; word-break: break-all; background: white; padding: 12px; border-radius: 6px; border: 1px solid #f3f4f6; }
     </style>
 </head>
-
 <body>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card app-card">
-                <!-- 標頭 -->
-                <div class="gradient-header text-center">
-                    <h1 class="h3 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>AI 頂級行銷文案直產器</h1>
-                    <p class="mb-0 opacity-75">內建 FB 演算法喜好邏輯 × Google Gemini 驅動</p>
+<div class="container">
+    <div class="card app-card">
+        <div class="header">
+            <h1>AI 頂級行銷文案直產器</h1>
+            <p>秒級載入版本 • 內建 FB 演算法喜好邏輯</p>
+        </div>
+        
+        <div class="body-content">
+            <!-- API 設定區 -->
+            <div class="api-box">
+                <div class="section-title">Gemini API 設定 (資料不外洩)</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <select id="geminiModel">
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash (推薦：極速)</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro (深度大作)</option>
+                        </select>
+                    </div>
+                    <div style="flex: 2; min-width: 250px;">
+                        <input type="password" id="apiKey" placeholder="請貼上您的 Google Gemini API Key (AIzaSy...)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品輸入欄位 -->
+            <div class="form-group">
+                <label>商品名稱</label>
+                <input type="text" id="prodName" placeholder="例如：日系原木感靜音除濕機">
+            </div>
+            
+            <div class="form-group">
+                <label>商品特色與規格</label>
+                <textarea id="prodFeatures" rows="3" placeholder="例如：日除濕量12L、運轉僅25分貝、一級能效節電"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;" class="form-group">
+                <div style="flex: 1; min-width: 200px;">
+                    <label>目標客群 (TA)</label>
+                    <input type="text" id="targetAudience" placeholder="例如：注重睡眠品質的租屋小資族">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label>想解決的痛點或渴望</label>
+                    <input type="text" id="corePain" placeholder="例如：房間潮濕衣服曬不乾、機器太吵">
+                </div>
+            </div>
+
+            <!-- 風格選擇區 -->
+            <div class="form-group">
+                <label>選擇 FB 文案風格 (演算法高觸及架構)</label>
+                <div class="style-grid">
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style1" value="情境共鳴型" checked>
+                        <div class="style-label">情境共鳴<span class="style-desc">直擊日常無奈點頭</span></div>
+                    </div>
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style2" value="知識科普型">
+                        <div class="style-label">知識科普<span class="style-desc">拆解盲點提供乾貨</span></div>
+                    </div>
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style3" value="幽默吐槽型">
+                        <div class="style-label">幽默自嘲<span class="style-desc">趣味吸睛引發互動</span></div>
+                    </div>
+                    <div class="style-item">
+                        <input type="radio" name="copyStyle" id="style4" value="高冷文青型">
+                        <div class="style-label">高級文青<span class="style-desc">營造精緻理想生活</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提交按鈕 -->
+            <button id="btnSubmit" class="btn-submit" onclick="startGeminiGeneration()">啟動 Gemini 一鍵生成文案</button>
+
+            <!-- 載入動畫 -->
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">AI 正在重組高轉化率行銷文案，請稍候約 5-10 秒...</div>
+            </div>
+
+            <!-- 結果區塊 -->
+            <div id="resultSection" class="result-section">
+                <div class="result-title">大師級行銷文案成果</div>
+                
+                <!-- 1. LINE -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="badge" style="background-color: #06C755;">1. LINE 推播 (標題+文案)</span>
+                        <button class="btn-copy" onclick="copyText('resLine')">複製</button>
+                    </div>
+                    <div id="resLine" class="result-body"></div>
                 </div>
 
-                <div class="card-body p-4">
-                    <!-- API 設定區塊 -->
-                    <div class="card bg-light mb-4 border-0">
-                        <div class="card-body">
-                            <h5 class="card-title h6 fw-bold text-primary"><i class="fa-solid fa-key me-2"></i>Gemini API 設定 (安全警示：資料僅保留在您的個人瀏覽器中)</h5>
-                            <div class="row g-2 mt-1">
-                                <div class="col-md-4">
-                                    <select id="geminiModel" class="form-select">
-                                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (極速、極省)</option>
-                                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (深度、強大)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="password" id="apiKey" class="form-control" placeholder="請貼上您的 Google Gemini API Key (例如: AIzaSy...)">
-                                </div>
-                            </div>
-                        </div>
+                <!-- 2. FB -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="badge" style="background-color: #1877F2;">2. FB 爆款貼文 (<span id="currentStyleLabel"></span>)</span>
+                        <button class="btn-copy" onclick="copyText('resFb')">複製</button>
                     </div>
-
-                    <!-- 商品資料輸入 -->
-                    <div class="mb-3">
                         <label for="prodName" class="form-label fw-bold">商品名稱</label>
                         <input type="text" id="prodName" class="form-control" placeholder="例如：日系原木感靜音除濕機">
                     </div>
