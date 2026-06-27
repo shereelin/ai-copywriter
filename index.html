@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 頂級行銷文案直產器 - Gemini 旗艦版</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        body { background-color: #f4f7f6; font-family: "Microsoft JhengHei", sans-serif; }
+        .app-card { border: none; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); background: #ffffff; }
+        .gradient-header { background: linear-gradient(135deg, #1a73e8 0%, #00e676 100%); color: white; border-radius: 16px 16px 0 0; padding: 2rem; }
+        .result-box { background-color: #f8f9fa; border-left: 4px solid #1a73e8; padding: 1.2rem; border-radius: 4px; min-height: 80px; white-space: pre-wrap; }
+        .loading-spinner { display: none; }
+        .style-card { cursor: pointer; transition: all 0.2s; border: 2px solid #e0e0e0; }
+        .style-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .style-radio:checked + .style-card { border-color: #1a73e8; background-color: #f1f7ff; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card app-card">
+                <!-- 標頭 -->
+                <div class="gradient-header text-center">
+                    <h1 class="h3 mb-2"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>AI 頂級行銷文案直產器</h1>
+                    <p class="mb-0 opacity-75">內建 FB 演算法喜好邏輯 × Google Gemini 驅動</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- API 設定區塊 -->
+                    <div class="card bg-light mb-4 border-0">
+                        <div class="card-body">
+                            <h5 class="card-title h6 fw-bold text-primary"><i class="fa-solid fa-key me-2"></i>Gemini API 設定 (安全警示：資料僅保留在您的個人瀏覽器中)</h5>
+                            <div class="row g-2 mt-1">
+                                <div class="col-md-4">
+                                    <select id="geminiModel" class="form-select">
+                                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (極速、極省)</option>
+                                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (深度、強大)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8">
+                                    <input type="password" id="apiKey" class="form-control" placeholder="請貼上您的 Google Gemini API Key (例如: AIzaSy...)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 商品資料輸入 -->
+                    <div class="mb-3">
+                        <label for="prodName" class="form-label fw-bold">商品名稱</label>
+                        <input type="text" id="prodName" class="form-control" placeholder="例如：日系原木感靜音除濕機">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="prodFeatures" class="form-label fw-bold">商品特色與規格</label>
+                        <textarea id="prodFeatures" class="form-control" rows="3" placeholder="例如：日除濕量12L、一級能效節電、運轉僅25分貝、簡約無印風"></textarea>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="targetAudience" class="form-label fw-bold">目標客群 (TA)</label>
+                            <input type="text" id="targetAudience" class="form-control" placeholder="例如：注重睡眠品質的租屋小資族">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="corePain" class="form-label fw-bold">想解決的痛點或渴望</label>
+                            <input type="text" id="corePain" class="form-control" placeholder="例如：房間潮濕衣服曬不乾、除濕機太吵影響睡眠">
+                        </div>
+                    </div>
+
+                    <!-- 新增：文案風格選擇區區塊 -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold mb-3"><i class="fa-solid fa-palette text-warning me-2"></i>選擇 FB 文案衍生風格 (演算法高觸及框架)</label>
+                        <div class="row g-3">
+                            <!-- 風格 1 -->
+                            <div class="col-md-6 col-xl-3">
+                                <input type="radio" name="copyStyle" id="style1" value="情境共鳴型" class="btn-check style-radio" checked>
+                                <label for="style1" class="card h-100 style-card p-3">
+                                    <div class="fw-bold text-dark mb-1"><i class="fa-solid fa-face-smile text-primary me-1"></i> 情境共鳴型</div>
+                                    <small class="text-muted">從日常尷尬或痛苦的情境切入，勾起讀者無奈並頻頻點頭。</small>
+                                </label>
+                            </div>
+                            <!-- 風格 2 -->
+                            <div class="col-md-6 col-xl-3">
+                                <input type="radio" name="copyStyle" id="style2" value="知識科普型" class="btn-check style-radio">
+                                <label for="style2" class="card h-100 style-card p-3">
+                                    <div class="fw-bold text-dark mb-1"><i class="fa-solid fa-lightbulb text-warning me-1"></i> 知識科普型</div>
+                                    <small class="text-muted">拆解生活盲點，提供乾貨，以專業形象包裝隱形解方。</small>
+                                </label>
+                            </div>
+                            <!-- 風格 3 -->
+                            <div class="col-md-6 col-xl-3">
+                                <input type="radio" name="copyStyle" id="style3" value="幽默吐槽型" class="btn-check style-radio">
+                                <label for="style3" class="card h-100 style-card p-3">
+                                    <div class="fw-bold text-dark mb-1"><i class="fa-solid fa-masks-theater text-danger me-1"></i> 幽默自嘲型</div>
+                                    <small class="text-muted">用趣味自黑或辛辣吐槽，引發社群分享與留言（停留率極高）。</small>
+                                </label>
+                            </div>
+                            <!-- 風格 4 -->
+                            <div class="col-md-6 col-xl-3">
+                                <input type="radio" name="copyStyle" id="style4" value="高冷文青型" class="btn-check style-radio">
+                                <label for="style4" class="card h-100 style-card p-3">
+                                    <div class="fw-bold text-dark mb-1"><i class="fa-solid fa-feather text-success me-1"></i> 高級文青型</div>
+                                    <small class="text-muted">重意境與儀式感描述，營造美好的「生活理想狀態」。</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 動作按鈕 -->
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="button" id="btnSubmit" class="btn btn-primary btn-lg py-3 fw-bold" onclick="startGeminiGeneration()">
+                            <i class="fa-solid fa-bolt me-2"></i>啟動 Gemini 一鍵生成文案
+                        </button>
+                    </div>
+
+                    <!-- 讀取狀態 -->
+                    <div id="loading" class="text-center loading-spinner my-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted fw-bold">Gemini 正在大腦重組「高停留時間」文案，請稍候...</p>
+                    </div>
+
+                    <!-- 成果輸出區 -->
+                    <div id="resultSection" style="display: none;">
+                        <hr class="my-4">
+                        <h3 class="h5 mb-4 fw-bold text-dark"><i class="fa-solid fa-square-poll-horizontal text-primary me-2"></i>大師級行銷文案成果</h3>
+                        
+                        <!-- 1. LINE -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge" style="background-color: #06C755; font-size: 0.9rem;">1. LINE 推播 (標題+文案)</span>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="copyText('resLine')"><i class="fa-regular fa-copy"></i> 複製</button>
+                            </div>
+                            <div id="resLine" class="result-box"></div>
+                        </div>
+
+                        <!-- 2. FB -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge" style="background-color: #1877F2; font-size: 0.9rem;">2. FB 爆款貼文 (<span id="currentStyleLabel"></span>)</span>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="copyText('resFb')"><i class="fa-regular fa-copy"></i> 複製</button>
+                            </div>
+                            <div id="resFb" class="result-box"></div>
+                        </div>
+
+                        <!-- 3. APP -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-dark" style="font-size: 0.9rem;">3. 公司 APP 推播 (嚴守30字內)</span>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="copyText('resApp')"><i class="fa-regular fa-copy"></i> 複製</button>
+                            </div>
+                            <div id="resApp" class="result-box"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
