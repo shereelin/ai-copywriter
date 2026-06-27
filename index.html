@@ -3,181 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI文案大師</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AI文案大師">
+    <title>AI 頂級行銷文案工作台</title>
+    <!-- [此處省略詳細 CSS 樣式，詳見參考文件] -->
     <style>
-        /* 🚀 零延遲輕量化 CSS，不加載任何海外外部資源 */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1f2937; padding: 20px 10px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .app-card { background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 30px; }
-        .header { background: linear-gradient(135deg, #1a73e8 0%, #00c853 100%); color: white; padding: 24px; text-align: center; }
-        .header h1 { font-size: 24px; margin-bottom: 6px; font-weight: bold; }
-        .body-content { padding: 20px; }
-        .api-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 15px; color: #374151; }
-        input[type="text"], input[type="password"], textarea, select { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 15px; }
-        .style-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        @media(min-width: 600px) { .style-grid { grid-template-columns: repeat(4, 1fr); } }
-        .style-item { position: relative; }
-        .style-item input[type="radio"] { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
-        .style-label { display: block; padding: 12px 8px; border: 2px solid #e5e7eb; border-radius: 8px; text-align: center; font-size: 13px; font-weight: bold; background: white; }
-        .style-desc { display: block; font-size: 11px; color: #6b7280; margin-top: 4px; font-weight: normal; }
-        .style-item input[type="radio"]:checked + .style-label { border-color: #1a73e8; background-color: #eff6ff; color: #1a73e8; }
-        .btn-submit { width: 100%; background-color: #1a73e8; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; }
-        .btn-submit:disabled { background-color: #9ca3af; }
-        .loading { display: none; text-align: center; padding: 20px 0; }
-        .spinner { width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #1a73e8; border-radius: 50%; display: inline-block; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* 🔴 超強效 Debug 紅色警戒提示盒 */
-        .error-alert-box { display: none; background-color: #fef2f2; border: 2px solid #ef4444; color: #991b1b; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; font-family: monospace; white-space: pre-wrap; }
-        
-        .result-section { display: none; border-top: 2px dashed #e5e7eb; margin-top: 25px; padding-top: 20px; }
-        .result-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: bold; }
-        .btn-copy { background: white; border: 1px solid #d1d5db; padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-        .result-body { white-space: pre-wrap; font-size: 14px; color: #374151; background: white; padding: 12px; border-radius: 6px; border: 1px solid #f3f4f6; min-height: 50px; }
+        /* 樣式優化，提供乾淨的工作台介面 */
+        body { font-family: sans-serif; padding: 20px; background-color: #f3f4f6; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+        .btn-submit { width: 100%; padding: 10px; background: #4f46e5; color: white; border: none; cursor: pointer; }
+        #resultSection { display: none; margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px; }
+        #promptBox { white-space: pre-wrap; background: #1e293b; color: #cbd5e1; padding: 10px; }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <div class="card app-card">
-        <div class="header">
-            <h1>AI 頂級行銷文案直產器</h1>
-            <p>【Bug 全面修復版】• 獨立通道防卡死</p>
-        </div>
-        
-        <div class="body-content">
-            <div class="api-box">
-                <label style="color: #1a73e8; font-size: 13px; font-weight: bold;">第一欄：貼上您的 Google Gemini API Key</label>
-                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <select id="geminiModel" style="flex: 1;">
-                        <!-- 修正模型：回歸最相容與快速穩定的主流核心 -->
-                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (穩定首選)</option>
-                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (最新極速)</option>
-                    </select>
-                    <input type="password" id="apiKey" style="flex: 2;" placeholder="請在此貼上以 AIzaSy 開頭的金鑰亂碼">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>商品名稱</label>
-                <input type="text" id="prodName" placeholder="例如：日系原木感靜音除濕機">
-            </div>
-            
-            <div class="form-group">
-                <label>商品特色與規格</label>
-                <textarea id="prodFeatures" rows="3" placeholder="例如：日除濕量12L、運轉僅25分貝、一級能效節電"></textarea>
-            </div>
-            
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;" class="form-group">
-                <div style="flex: 1; min-width: 200px;">
-                    <label>目標客群 (TA)</label>
-                    <input type="text" id="targetAudience" placeholder="例如：注重睡眠品質的租屋小資族">
-                </div>
-                <div style="flex: 1; min-width: 200px;">
-                    <label>想解決的痛點或渴望</label>
-                    <input type="text" id="corePain" placeholder="例如：房間潮濕衣服曬不乾、機器太吵">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>選擇 FB 文案風格 (演算法高觸及架構)</label>
-                <div class="style-grid">
-                    <div class="style-item">
-                        <input type="radio" name="copyStyle" id="style1" value="情境共鳴型" checked>
-                        <div class="style-label">情境共鳴<span class="style-desc">日常無奈點頭</span></div>
-                    </div>
-                    <div class="style-item">
-                        <input type="radio" name="copyStyle" id="style2" value="知識科普型">
-                        <div class="style-label">知識科普<span class="style-desc">盲點乾貨分享</span></div>
-                    </div>
-                    <div class="style-item">
-                        <input type="radio" name="copyStyle" id="style3" value="幽默吐槽型">
-                        <div class="style-label">幽默自嘲<span class="style-desc">趣味引發互動</span></div>
-                    </div>
-                    <div class="style-item">
-                        <input type="radio" name="copyStyle" id="style4" value="高冷文青型">
-                        <div class="style-label">高級文青<span class="style-desc">營造理想生活</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <button id="btnSubmit" class="btn-submit" onclick="runAllGenerations()">啟動 Gemini 一鍵生成文案</button>
-
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <div id="loadingText" class="loading-text">正在初始化 Google AI 大腦...</div>
-            </div>
-
-            <!-- 🔴 異常警報盒子 -->
-            <div id="errorAlertBox" class="error-alert-box"></div>
-
-            <div id="resultSection" class="result-section">
-                <h3 style="font-size: 16px; margin-bottom: 15px; font-weight: bold; color: #1a73e8;">✨ 大師級行銷文案成果</h3>
-                
-                <div class="result-card">
-                    <div class="result-header">
-                        <span style="color: #06C755;">1. LINE 推播 (標題+文案)</span>
-                        <button class="btn-copy" onclick="copyText('resLine')">複製</button>
-                    </div>
-                    <div id="resLine" class="result-body"></div>
-                </div>
-
-                <div class="result-card">
-                    <div class="result-header">
-                        <span style="color: #1877F2;">2. FB 爆款貼文</span>
-                        <button class="btn-copy" onclick="copyText('resFb')">複製</button>
-                    </div>
-                    <div id="resFb" class="result-body"></div>
-                </div>
-
-                <div class="result-card">
-                    <div class="result-header">
-                        <span style="color: #374151;">3. 公司 APP 推播 (限30字)</span>
-                        <button class="btn-copy" onclick="copyText('resApp')">複製</button>
-                    </div>
-                    <div id="resApp" class="result-body"></div>
-                </div>
-            </div>
-        </div>
+    <h2>AI 頂級行銷文案工作台</h2>
+    <div class="form-group"><label>商品名稱</label><input type="text" id="prodName"></div>
+    <div class="form-group"><label>特色與規格</label><textarea id="prodFeatures"></textarea></div>
+    <div class="form-group"><label>目標客群 (TA)</label><input type="text" id="targetAudience"></div>
+    <div class="form-group"><label>痛點或渴望</label><input type="text" id="corePain"></div>
+    <div class="form-group">
+        <label>選擇風格</label>
+        <select id="copyStyle">
+            <option value="情境共鳴型">情境共鳴型</option>
+            <option value="知識科普型">知識科普型</option>
+        </select>
+    </div>
+    <button class="btn-submit" onclick="generatePrompt()">一鍵調配提示詞</button>
+    <div id="resultSection">
+        <h3>複製下方指令貼給 AI：</h3>
+        <div id="promptBox"></div>
+        <button onclick="copyText()">一鍵複製</button>
     </div>
 </div>
-
 <script>
-// 🚀 修正後的底層連線通道，增加絕緣安全設計
-async function callGeminiStable(prompt, apiKey, model) {
-    // 修正 Endpoint 格式，確保與目前全球 API 網址標準 100% 同步
-    const url = `https://googleapis.com{model}:generateContent?key=${apiKey}`;
-    
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-        })
-    });
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-        // 捕捉被拒絕的具體代碼
-        throw new Error(data.error?.message || `Google API 拒絕連線 (錯誤代碼: ${response.status})`);
-    }
-    
-    if (!data.candidates || data.candidates.length === 0) {
-        throw new Error("Google AI 拒絕回答此行銷提示詞，請確認輸入欄位是否包含敏感或不合規文字。");
-    }
-    
-    return data.candidates[0].content.parts[0].text;
+function generatePrompt() {
+    const name = document.getElementById('prodName').value;
+    const features = document.getElementById('prodFeatures').value;
+    const style = document.getElementById('copyStyle').value;
+    // 生成提示詞邏輯 (詳見參考文件)
+    const prompt = `你是一位頂級行銷文案大師。請根據以下資訊撰寫風格為「${style}」的爆款文案：商品名稱-${name}，核心特色-${features}。請專注於痛點與生活畫面感，符合FB演算法，字數約300-500字。`;
+    document.getElementById('promptBox').innerText = prompt;
+    document.getElementById('resultSection').style.display = 'block';
 }
-
-async function runAllGenerations() {
-    const apiKey = document.getElementById('apiKey').value.trim();
-    const errorAlertBox = document.getElementById('errorAlertBox');
-    const loading = document.getElementById('loading');
+function copyText() {
+    navigator.clipboard.writeText(document.getElementById('promptBox').innerText);
+    alert('已複製！');
+}
+</script>
+</body>
+</html>
